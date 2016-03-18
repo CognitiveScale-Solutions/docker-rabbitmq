@@ -1,4 +1,4 @@
-FROM        quay.io/aptible/alpine 
+FROM        alpine:3.2
 
 ENV         RABBITMQ_VERSION=3.5.7 \
             RABBITMQ_MNESIA_BASE=/var/db/rabbitmq \
@@ -10,8 +10,9 @@ ENV         RABBITMQ_HOME=/srv/rabbitmq_server-${RABBITMQ_VERSION} \
             ENABLED_PLUGINS_FILE=/srv/rabbitmq_server-${RABBITMQ_VERSION}/etc/rabbitmq/enabled_plugins
 ENV         PATH=$RABBITMQ_HOME/sbin:$PATH
 
-RUN         mkdir /srv && apk add --update curl tar gzip bash && \
-            curl -Lk "https://github.com/rabbitmq/rabbitmq-server/releases/download/rabbitmq_v${RABBITMQ_VERSION//\./_}/rabbitmq-server-generic-unix-${RABBITMQ_VERSION}.tar.gz" > /srv/rabbitmq-server-generic-unix-${RABBITMQ_VERSION}.tar.gz && \
+RUN         mkdir /srv && apk add --update curl tar gzip bash 
+
+RUN         curl -Lk "https://github.com/rabbitmq/rabbitmq-server/releases/download/rabbitmq_v${RABBITMQ_VERSION//\./_}/rabbitmq-server-generic-unix-${RABBITMQ_VERSION}.tar.gz" > /srv/rabbitmq-server-generic-unix-${RABBITMQ_VERSION}.tar.gz && \
             echo "http://dl-4.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
             echo "http://dl-4.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
             echo "http://dl-4.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
@@ -37,8 +38,32 @@ RUN         ln -s /var/db/testca/cacert.pem /ssl/cacert.pem && \
             ln -s /var/db/server/cert.pem /ssl/cert.pem && \
             ln -s /var/db/server/key.pem /ssl/key.pem && \
             chmod a+x /usr/bin/wrapper /usr/local/bin/rabbitmqadmin && \
-            bats --tap /tmp/test && apk del --purge python
+            apk del --purge python
 EXPOSE      15671 5671
 VOLUME      ["$DATA_DIRECTORY"]
+
+
+
+
+############################ LETSENCRYPT ###########################
+RUN apk add --update  \
+  python python-dev py-pip \
+  gcc musl-dev linux-headers \
+  augeas-dev openssl-dev libffi-dev ca-certificates dialog \
+  && rm -rf /var/cache/apk/*
+
+RUN pip install -U letsencrypt
+
+# used for webroot reauth
+RUN mkdir -p /etc/letsencrypt/webrootauth
+
+ADD entrypoint.sh /entrypoint.sh
+
+EXPOSE 80 443
+############################ LETSENCRYPT ###########################
+
+# Combined entrypoints for letsencrypt first (short lived) and then rabbitmq
+ENTRYPOINT ["/entrypoint.sh"]
+
 ENTRYPOINT  ["/usr/bin/wrapper"]
 
