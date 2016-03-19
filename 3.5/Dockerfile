@@ -37,7 +37,7 @@ ADD         test /tmp/test
 RUN         ln -s /var/db/testca/cacert.pem /ssl/cacert.pem && \
             ln -s /var/db/server/cert.pem /ssl/cert.pem && \
             ln -s /var/db/server/key.pem /ssl/key.pem && \
-            chmod a+x /usr/bin/wrapper /usr/local/bin/rabbitmqadmin /entrypoint.sh && \
+            chmod a+x /usr/bin/wrapper /usr/local/bin/rabbitmqadmin && \
             apk del --purge python
 EXPOSE      15671 5671
 VOLUME      ["$DATA_DIRECTORY"]
@@ -58,6 +58,7 @@ RUN pip install -U letsencrypt
 RUN mkdir -p /etc/letsencrypt/webrootauth
 
 ADD entrypoint.sh /entrypoint.sh
+RUN chmod a+x /entrypoint.sh
 
 EXPOSE 80 443
 ############################ LETSENCRYPT ###########################
