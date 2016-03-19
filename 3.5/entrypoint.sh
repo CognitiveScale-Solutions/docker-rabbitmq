@@ -69,7 +69,7 @@ EOF
 chmod +x /etc/periodic/monthly/reissue
 
 # move this outside of container
-# /usr/sbin/crond -f -d 8 &
+/usr/sbin/crond -f -d 8 &
 
 echo Ready
 
