@@ -45,7 +45,7 @@ SERVER=""
 if [ ! -f /etc/letsencrypt/live/${DOMAIN}/fullchain.pem ]; then
 echo "letsencrypt certonly \
    --domain ${DOMAIN} \
-   \"${DOMAIN_STRING}\" \
+   ${DOMAIN_STRING} \
    --authenticator standalone \
    ${SERVER} \
     --email ${EMAIL} --agree-tos "
