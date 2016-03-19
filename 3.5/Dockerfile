@@ -37,7 +37,7 @@ ADD         test /tmp/test
 RUN         ln -s /var/db/testca/cacert.pem /ssl/cacert.pem && \
             ln -s /var/db/server/cert.pem /ssl/cert.pem && \
             ln -s /var/db/server/key.pem /ssl/key.pem && \
-            chmod a+x /usr/bin/wrapper /usr/local/bin/rabbitmqadmin && \
+            chmod a+x /usr/bin/wrapper /usr/local/bin/rabbitmqadmin /entrypoint.sh && \
             apk del --purge python
 EXPOSE      15671 5671
 VOLUME      ["$DATA_DIRECTORY"]
@@ -63,7 +63,6 @@ EXPOSE 80 443
 ############################ LETSENCRYPT ###########################
 
 # Combined entrypoints for letsencrypt first (short lived) and then rabbitmq
-USER root
 ENTRYPOINT ["/entrypoint.sh"]
 
 
