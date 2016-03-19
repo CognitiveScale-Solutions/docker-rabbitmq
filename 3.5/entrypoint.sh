@@ -43,6 +43,14 @@ SERVER=""
 
 # Initial certificate request, but skip if cached
 if [ ! -f /etc/letsencrypt/live/${DOMAIN}/fullchain.pem ]; then
+echo "letsencrypt certonly \
+   --domain ${DOMAIN} \
+   \"${DOMAIN_STRING}\" \
+   --authenticator standalone \
+   ${SERVER} \
+    --email ${EMAIL} --agree-tos "
+
+
   letsencrypt certonly \
    --domain ${DOMAIN} \
    \"${DOMAIN_STRING}\" \
