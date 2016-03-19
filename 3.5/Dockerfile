@@ -65,5 +65,4 @@ EXPOSE 80 443
 # Combined entrypoints for letsencrypt first (short lived) and then rabbitmq
 ENTRYPOINT ["/entrypoint.sh"]
 
-ENTRYPOINT  ["/usr/bin/wrapper"]
 

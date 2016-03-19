@@ -73,4 +73,4 @@ chmod +x /etc/periodic/monthly/reissue
 
 echo Ready
 
-/run-database.sh
+/usr/bin/wrapper
